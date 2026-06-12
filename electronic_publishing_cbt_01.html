@@ -97,18 +97,8 @@
     </header>
     <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
 
-    <div class="nav-grid" id="navGrid"></div>
+    <div id="questionList"></div>
 
-    <div class="card">
-      <div class="qnum" id="qnum"></div>
-      <div class="qtext" id="qtext"></div>
-      <div class="options" id="options"></div>
-    </div>
-
-    <div class="controls">
-      <button class="btn secondary" onclick="prevQ()">◀ 이전</button>
-      <button class="btn secondary" onclick="nextQ()">다음 ▶</button>
-    </div>
     <div class="controls">
       <button class="btn submit" onclick="confirmSubmit()">시험 종료 및 채점</button>
     </div>
@@ -319,70 +309,56 @@ function updateTimerDisplay(){
 }
 
 /* ===========================================================
-   네비게이션 그리드
+   전체 문항 렌더링 (스크롤 방식)
 =========================================================== */
 function buildNavGrid(){
-  const grid = document.getElementById('navGrid');
-  grid.innerHTML = '';
-  questions.forEach((_, i)=>{
-    const btn = document.createElement('button');
-    btn.textContent = i+1;
-    btn.id = 'nav-' + i;
-    btn.onclick = ()=>{ currentIndex = i; renderQuestion(); };
-    grid.appendChild(btn);
-  });
+  // 사용 안 함 (스크롤 방식)
 }
 
-function refreshNavGrid(){
-  questions.forEach((_, i)=>{
-    const btn = document.getElementById('nav-'+i);
-    btn.classList.toggle('answered', userAnswers[i] !== null);
-    btn.classList.toggle('current', i === currentIndex);
-  });
-}
-
-/* ===========================================================
-   문항 렌더링
-=========================================================== */
 function renderQuestion(){
-  const q = questions[currentIndex];
-  document.getElementById('qnum').textContent =
-    `문제 ${currentIndex+1} / ${questions.length}  (${subjectName(q.subject)})`;
-  document.getElementById('qtext').textContent = q.q;
+  const listDiv = document.getElementById('questionList');
+  listDiv.innerHTML = '';
 
-  const optDiv = document.getElementById('options');
-  optDiv.innerHTML = '';
-  q.options.forEach((opt, idx)=>{
-    const label = document.createElement('label');
-    label.innerHTML = `<input type="radio" name="opt" value="${idx}"> ${idx+1}. ${opt}`;
-    if(userAnswers[currentIndex] === idx) label.classList.add('selected');
-    label.querySelector('input').checked = (userAnswers[currentIndex] === idx);
-    label.onclick = ()=>{
-      userAnswers[currentIndex] = idx;
-      renderQuestion();
-      refreshNavGrid();
-    };
-    optDiv.appendChild(label);
+  questions.forEach((q, i)=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = 'q-' + i;
+
+    const qnum = document.createElement('div');
+    qnum.className = 'qnum';
+    qnum.textContent = `문제 ${i+1} / ${questions.length}  (${subjectName(q.subject)})`;
+    card.appendChild(qnum);
+
+    const qtext = document.createElement('div');
+    qtext.className = 'qtext';
+    qtext.textContent = q.q;
+    card.appendChild(qtext);
+
+    const optDiv = document.createElement('div');
+    optDiv.className = 'options';
+    q.options.forEach((opt, idx)=>{
+      const label = document.createElement('label');
+      label.innerHTML = `<input type="radio" name="opt-${i}" value="${idx}"> ${idx+1}. ${opt}`;
+      if(userAnswers[i] === idx) label.classList.add('selected');
+      label.querySelector('input').checked = (userAnswers[i] === idx);
+      label.onclick = ()=>{
+        userAnswers[i] = idx;
+        renderQuestion();
+      };
+      optDiv.appendChild(label);
+    });
+    card.appendChild(optDiv);
+
+    listDiv.appendChild(card);
   });
 
-  const progress = ((currentIndex+1)/questions.length)*100;
+  updateProgress();
+}
+
+function updateProgress(){
+  const answered = userAnswers.filter(a=>a!==null).length;
+  const progress = (answered/questions.length)*100;
   document.getElementById('progressBar').style.width = progress + '%';
-  refreshNavGrid();
-
-  // 좌우 끝 처리
-  document.querySelectorAll('.controls')[0].children[0].disabled = (currentIndex===0);
-  document.querySelectorAll('.controls')[0].children[1].textContent =
-    (currentIndex === questions.length-1) ? '처음으로' : '다음 ▶';
-}
-
-function prevQ(){
-  if(currentIndex > 0){ currentIndex--; renderQuestion(); window.scrollTo(0,0); }
-}
-function nextQ(){
-  if(currentIndex < questions.length-1){ currentIndex++; }
-  else { currentIndex = 0; }
-  renderQuestion();
-  window.scrollTo(0,0);
 }
 
 function subjectName(s){
