@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전자출판기능사 필기 60문항 CBT 기출문제 (타이머 포함)</title>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding-top: 100px; }
+        
+        /* 상단 고정 타이머 바 디자인 */
+        .timer-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #2c3e50;
+            color: #fff;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.3em;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .timer-bar span { color: #e74c3c; font-size: 1.1em; }
+
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; border-bottom: 2px solid #3498db; padding-bottom: 15px; }
+        .quiz-info { background: #e8f4fd; padding: 15px; border-radius: 6px; margin-bottom: 25px; font-size: 0.95em; line-height: 1.6; }
+        .question-card { margin-bottom: 25px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 6px; background: #fafafa; }
+        .q-title { font-weight: bold; font-size: 1.1em; margin-bottom: 12px; color: #2c3e50; }
+        .options { list-style: none; padding: 0; margin: 0; }
+        .options li { margin-bottom: 8px; }
+        .options label { display: block; padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        .options label:hover { background: #f0f0f0; }
+        .options input[type="radio"] { margin-right: 10px; }
+        .btn-container { text-align: center; margin-top: 30px; }
+        button { background: #3498db; color: #fff; border: none; padding: 12px 30px; font-size: 1.1em; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #2980b9; }
+        #result { margin-top: 25px; padding: 20px; border-radius: 6px; text-align: center; font-size: 1.3em; font-weight: bold; display: none; }
+        .correct-ans { color: #27ae60; font-weight: bold; margin-top: 5px; font-size: 0.95em; display: none; }
+        .wrong-card { border-left: 5px solid #e74c3c; background: #fdf2f2; }
+        .correct-card { border-left: 5px solid #27ae60; background: #f2fdf5; }
+    </style>
+</head>
+<body>
+
+<div class="timer-bar">
+    ⏱️ 남은 시간: <span id="timeDisplay">60:00</span>
+</div>
+
+<div class="container">
+    <h1>전자출판기능사 필기 모의고사</h1>
+    <div class="quiz-info">
+        <strong>💡 시험 안내</strong><br>
+        - 본 시험은 총 60문항이며, 실제 시험 시간과 동일한 <strong>60분 제한 시간</strong>이 적용됩니다.<br>
+        - 시간이 모두 경과하면 시험이 자동 종료 및 제출됩니다.<br>
+        - 합격 기준은 100점 만점 중 <strong>60점 이상(36문항 이상 맞춤)</strong>입니다.
+    </div>
+
+    <form id="quizForm">
+        <div class="question-card" id="q1">
+            <div class="q-title">1. 다음 중 오프셋(Offset) 인쇄의 기본 원리로 가장 올바른 것은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans1" value="1"> 판면의 홈에 잉크를 채워 인쇄한다.</label></li>
+                <li><label><input type="radio" name="ans1" value="2"> 물과 기름의 반발 원리를 이용한다.</label></li>
+                <li><label><input type="radio" name="ans1" value="3"> 정전기를 이용해 토너를 흡착시킨다.</label></li>
+                <li><label><input type="radio" name="ans1" value="4"> 고무판을 깎아 볼록한 부분에 잉크를 묻힌다.</label></li>
+            </ul>
+            <div class="correct-ans" id="c1">정답: 2번 (평판 인쇄의 대표 격으로 물과 기름이 섞이지 않는 성질을 이용)</div>
+        </div>
+
+        <div class="question-card" id="q2">
+            <div class="q-title">2. 다음 중 국제표준도서번호(ISBN)의 구성요소에 해당하지 않는 것은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans2" value="1"> 접두기호 (978 또는 979)</label></li>
+                <li><label><input type="radio" name="ans2" value="2"> 국별 식별번호</label></li>
+                <li><label><input type="radio" name="ans2" value="3"> 발행처 식별번호</label></li>
+                <li><label><input type="radio" name="ans2" value="4"> 저자 생년월일 코드</label></li>
+            </ul>
+            <div class="correct-ans" id="c2">정답: 4번 (저자의 개인정보인 생년월일은 포함되지 않음)</div>
+        </div>
+
+        <div class="question-card" id="q3">
+            <div class="q-title">3. 타이포그래피에서 특정 글자 쌍(예: AV, WA 등)의 시각적 공간을 미세하게 조정하는 작업은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans3" value="1"> 리딩(Leading)</label></li>
+                <li><label><input type="radio" name="ans3" value="2"> 커닝(Kerning)</label></li>
+                <li><label><input type="radio" name="ans3" value="3"> 트래킹(Tracking)</label></li>
+                <li><label><input type="radio" name="ans3" value="4"> 저스티피케이션(Justification)</label></li>
+            </ul>
+            <div class="correct-ans" id="c3">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q4">
+            <div class="q-title">4. 다음 중 화면 크기에 따라 텍스트 레이아웃이 자동으로 흐르는 리플로우(Reflowable) 기능이 특징인 전자책 표준 포맷은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans4" value="1"> PDF</label></li>
+                <li><label><input type="radio" name="ans4" value="2"> EPUB</label></li>
+                <li><label><input type="radio" name="ans4" value="3"> JPEG</label></li>
+                <li><label><input type="radio" name="ans4" value="4"> TIFF</label></li>
+            </ul>
+            <div class="correct-ans" id="c4">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q5">
+            <div class="q-title">5. 컴퓨터 그래픽스에서 이미지를 아무리 확대해도 테두리가 깨지지 않는 방식은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans5" value="1"> 비트맵 방식</label></li>
+                <li><label><input type="radio" name="ans5" value="2"> 래스터 방식</label></li>
+                <li><label><input type="radio" name="ans5" value="3"> 벡터 방식</label></li>
+                <li><label><input type="radio" name="ans5" value="4"> 픽셀 방식</label></li>
+            </ul>
+            <div class="correct-ans" id="c5">정답: 3번</div>
+        </div>
+
+        <div class="question-card" id="q6">
+            <div class="q-title">6. 인쇄물에서 책 제목이나 페이지 번호 등을 지면 상·하단 여백에 고정적으로 배치하는 요소는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans6" value="1"> 캡션(Caption)</label></li>
+                <li><label><input type="radio" name="ans6" value="2"> 기둥(Running Head)</label></li>
+                <li><label><input type="radio" name="ans6" value="3"> 본문(Body Text)</label></li>
+                <li><label><input type="radio" name="ans6" value="4"> 그루브(Groove)</label></li>
+            </ul>
+            <div class="correct-ans" id="c6">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q7">
+            <div class="q-title">7. 모니터 등 디스플레이 기기에서 사용하는 빛의 3원색 가법혼합 조합은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans7" value="1"> CMYK</label></li>
+                <li><label><input type="radio" name="ans7" value="2"> HSB</label></li>
+                <li><label><input type="radio" name="ans7" value="3"> RGB</label></li>
+                <li><label><input type="radio" name="ans7" value="4"> CIE</label></li>
+            </ul>
+            <div class="correct-ans" id="c7">정답: 3번</div>
+        </div>
+
+        <div class="question-card" id="q8">
+            <div class="q-title">8. 다음 중 사륙판(B열 전지)과 국판(A열 전지)의 크기 비교로 옳은 것은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans8" value="1"> 사륙판 전지가 국판 전지보다 크다.</label></li>
+                <li><label><input type="radio" name="ans8" value="2"> 국판 전지가 사륙판 전지보다 크다.</label></li>
+                <li><label><input type="radio" name="ans8" value="3"> 두 전지의 규격 크기는 완전히 같다.</label></li>
+                <li><label><input type="radio" name="ans8" value="4"> 가로 세로 비율 자체가 다르다.</label></li>
+            </ul>
+            <div class="correct-ans" id="c8">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q9">
+            <div class="q-title">9. 얇은 잡지나 카탈로그의 가운데 접지선에 철사를 박아 고정하는 제본 방식은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans9" value="1"> 무선제본</label></li>
+                <li><label><input type="radio" name="ans9" value="2"> 양장제본</label></li>
+                <li><label><input type="radio" name="ans9" value="3"> 중철제본</label></li>
+                <li><label><input type="radio" name="ans9" value="4"> 스프링제본</label></li>
+            </ul>
+            <div class="correct-ans" id="c9">정답: 3번</div>
+        </div>
+
+        <div class="question-card" id="q10">
+            <div class="q-title">10. 그래픽스에서 이미지의 색상 정보(RGB) 외에 '투명도 정보'를 저장하는 채널은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans10" value="1"> 스폿 채널</label></li>
+                <li><label><input type="radio" name="ans10" value="2"> 알파 채널</label></li>
+                <li><label><input type="radio" name="ans10" value="3"> 시안 채널</label></li>
+                <li><label><input type="radio" name="ans10" value="4"> 인덱스 채널</label></li>
+            </ul>
+            <div class="correct-ans" id="c10">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q11">
+            <div class="q-title">11. 전통적인 인쇄 방식 중 판면의 유선형 구멍을 통해 잉크를 밀어내어 인쇄하며, 옷감이나 곡면 인쇄에 유용한 방식은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans11" value="1"> 볼록판 인쇄</label></li>
+                <li><label><input type="radio" name="ans11" value="2"> 오목판 인쇄</label></li>
+                <li><label><input type="radio" name="ans11" value="3"> 평판 인쇄</label></li>
+                <li><label><input type="radio" name="ans11" value="4"> 스크린 인쇄(공판)</label></li>
+            </ul>
+            <div class="correct-ans" id="c11">정답: 4번</div>
+        </div>
+
+        <div class="question-card" id="q12">
+            <div class="q-title">12. 저작자가 사망한 후 저작재산권은 몇 년간 존속하는가? (대한민국 저작권법 기준)</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans12" value="1"> 30년</label></li>
+                <li><label><input type="radio" name="ans12" value="2"> 50년</label></li>
+                <li><label><input type="radio" name="ans12" value="3"> 70년</label></li>
+                <li><label><input type="radio" name="ans12" value="4"> 100년</label></li>
+            </ul>
+            <div class="correct-ans" id="c12">정답: 3번</div>
+        </div>
+
+        <div class="question-card" id="q13">
+            <div class="q-title">13. 타이포그래피에서 연속된 텍스트 블록 전체의 자간을 일괄적으로 조절하는 기능은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans13" value="1"> 트래킹(Tracking)</label></li>
+                <li><label><input type="radio" name="ans13" value="2"> 커닝(Kerning)</label></li>
+                <li><label><input type="radio" name="ans13" value="3"> 앨라인먼트(Alignment)</label></li>
+                <li><label><input type="radio" name="ans13" value="4"> 행간(Leading)</label></li>
+            </ul>
+            <div class="correct-ans" id="c13">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q14">
+            <div class="q-title">14. 연속적인 계조를 가진 사진 원고를 인쇄하기 위해 미세한 망점(Dot)으로 변환하는 공정은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans14" value="1"> 정판</label></li>
+                <li><label><input type="radio" name="ans14" value="2"> 스캐닝</label></li>
+                <li><label><input type="radio" name="ans14" value="3"> 스크리닝(하프토닝)</label></li>
+                <li><label><input type="radio" name="ans14" value="4"> 정색</label></li>
+            </ul>
+            <div class="correct-ans" id="c14">정답: 3번</div>
+        </div>
+
+        <div class="question-card" id="q15">
+            <div class="q-title">15. 웹(Web) 브라우저에서 애니메이션 효과를 지원하며 256색까지만 표현 가능한 이미지 파일 포맷은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans15" value="1"> JPEG</label></li>
+                <li><label><input type="radio" name="ans15" value="2"> GIF</label></li>
+                <li><label><input type="radio" name="ans15" value="3"> PNG</label></li>
+                <li><label><input type="radio" name="ans15" value="4"> BMP</label></li>
+            </ul>
+            <div class="correct-ans" id="c15">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q16">
+            <div class="q-title">16. 종이의 무게 단위로, 가로세로 1m인 종이 1장의 무게를 나타내는 기호는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans16" value="1"> R</label></li>
+                <li><label><input type="radio" name="ans16" value="2"> g/m²</label></li>
+                <li><label><input type="radio" name="ans16" value="3"> kg</label></li>
+                <li><label><input type="radio" name="ans16" value="4"> Lpi</label></li>
+            </ul>
+            <div class="correct-ans" id="c16">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q17">
+            <div class="q-title">17. 전자출판의 특징으로 가장 거리가 먼 것은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans17" value="1"> 멀티미디어 요소(소리, 영상) 삽입 가능</label></li>
+                <li><label><input type="radio" name="ans17" value="2"> 신속한 업데이트 및 배포 가능</label></li>
+                <li><label><input type="radio" name="ans17" value="3"> 전용 단말기나 뷰어가 필요함</label></li>
+                <li><label><input type="radio" name="ans17" value="4"> 인쇄물에 비해 무조건 가독성이 우수함</label></li>
+            </ul>
+            <div class="correct-ans" id="c17">정답: 4번</div>
+        </div>
+
+        <div class="question-card" id="q18">
+            <div class="q-title">18. 디자인의 조건 중 합리적인 비용으로 최대의 효과를 얻으려는 조건은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans18" value="1"> 경제성</label></li>
+                <li><label><input type="radio" name="ans18" value="2"> 심미성</label></li>
+                <li><label><input type="radio" name="ans18" value="3"> 독창성</label></li>
+                <li><label><input type="radio" name="ans18" value="4"> 기능성</label></li>
+            </ul>
+            <div class="correct-ans" id="c18">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q19">
+            <div class="q-title">19. 인쇄용 서체 중 획의 굵기가 일정하며 가독성보다 주목성이 높아 제목용으로 주로 쓰이는 서체는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans19" value="1"> 명조체(바탕체)</label></li>
+                <li><label><input type="radio" name="ans19" value="2"> 고딕체(돋움체)</label></li>
+                <li><label><input type="radio" name="ans19" value="3"> 궁서체</label></li>
+                <li><label><input type="radio" name="ans19" value="4"> 필기체</label></li>
+            </ul>
+            <div class="correct-ans" id="c19">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q20">
+            <div class="q-title">20. 다음 중 인쇄용 컬러 시스템(CMYK)에서 'M'이 뜻하는 색상은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans20" value="1"> 마린 블루</label></li>
+                <li><label><input type="radio" name="ans20" value="2"> 마젠타(자홍색)</label></li>
+                <li><label><input type="radio" name="ans20" value="3"> 머스타드</label></li>
+                <li><label><input type="radio" name="ans20" value="4"> 마룬</label></li>
+            </ul>
+            <div class="correct-ans" id="c20">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q21">
+            <div class="q-title">21. 다음 중 스캐너의 해상도를 나타내는 기본 단위는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans21" value="1"> DPI</label></li>
+                <li><label><input type="radio" name="ans21" value="2"> LPI</label></li>
+                <li><label><input type="radio" name="ans21" value="3"> PPI</label></li>
+                <li><label><input type="radio" name="ans21" value="4"> FPS</label></li>
+            </ul>
+            <div class="correct-ans" id="c21">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q22">
+            <div class="q-title">22. 책의 내지를 묶어 표지와 결합할 때, 등 부분을 깎아내고 풀(접착제)로만 고정하는 제본법은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans22" value="1"> 무선제본</label></li>
+                <li><label><input type="radio" name="ans22" value="2"> 중철제본</label></li>
+                <li><label><input type="radio" name="ans22" value="3"> 양장제본</label></li>
+                <li><label><input type="radio" name="ans22" value="4"> 반양장제본</label></li>
+            </ul>
+            <div class="correct-ans" id="c22">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q23">
+            <div class="q-title">23. 문자나 이미지를 종이 표면 위로 볼록하게 튀어나오도록 누르는 가공 기법은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans23" value="1"> 디보싱(Debossing)</label></li>
+                <li><label><input type="radio" name="ans23" value="2"> 엠보싱(Embossing)</label></li>
+                <li><label><input type="radio" name="ans23" value="3"> 미싱가공</label></li>
+                <li><label><input type="radio" name="ans23" value="4"> 도금가공</label></li>
+            </ul>
+            <div class="correct-ans" id="c23">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q24">
+            <div class="q-title">24. 다음 중 화면 해상도가 72 DPI일 때, 가로 2인치 세로 3인치 이미지의 픽셀 크기는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans24" value="1"> 72 x 72</label></li>
+                <li><label><input type="radio" name="ans24" value="2"> 144 x 216</label></li>
+                <li><label><input type="radio" name="ans24" value="3"> 200 x 300</label></li>
+                <li><label><input type="radio" name="ans24" value="4"> 72 x 216</label></li>
+            </ul>
+            <div class="correct-ans" id="c24">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q25">
+            <div class="q-title">25. 색의 3속성에 해당하지 않는 것은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans25" value="1"> 색상</label></li>
+                <li><label><input type="radio" name="ans25" value="2"> 명도</label></li>
+                <li><label><input type="radio" name="ans25" value="3"> 채도</label></li>
+                <li><label><input type="radio" name="ans25" value="4"> 휘도</label></li>
+            </ul>
+            <div class="correct-ans" id="c25">정답: 4번</div>
+        </div>
+
+        <div class="question-card" id="q26">
+            <div class="q-title">26. 디자인 원리 중 시각적 무게감이 어느 한쪽으로 치우치지 않고 평형을 이루는 상태는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans26" value="1"> 율동</label></li>
+                <li><label><input type="radio" name="ans26" value="2"> 균형</label></li>
+                <li><label><input type="radio" name="ans26" value="3"> 대비</label></li>
+                <li><label><input type="radio" name="ans26" value="4"> 강조</label></li>
+            </ul>
+            <div class="correct-ans" id="c26">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q27">
+            <div class="q-title">27. 전자책 표준 포맷인 EPUB의 스타일을 제어하기 위해 사용하는 웹 표준 기술은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans27" value="1"> SQL</label></li>
+                <li><label><input type="radio" name="ans27" value="2"> CSS</label></li>
+                <li><label><input type="radio" name="ans27" value="3"> PHP</label></li>
+                <li><label><input type="radio" name="ans27" value="4"> C++</label></li>
+            </ul>
+            <div class="correct-ans" id="c27">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q28">
+            <div class="q-title">28. 주로 신문이나 잡지 광고에서 시선을 끌기 위해 사용하는 가장 큰 제목 서체 요소를 무엇이라 하는가?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans28" value="1"> 본문 헤드</label></li>
+                <li><label><input type="radio" name="ans28" value="2"> 대표제(헤드라인)</label></li>
+                <li><label><input type="radio" name="ans28" value="3"> 소표제</label></li>
+                <li><label><input type="radio" name="ans28" value="4"> 바디카피</label></li>
+            </ul>
+            <div class="correct-ans" id="c28">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q29">
+            <div class="q-title">29. 다음 중 레이아웃 가이드라인으로 쓰이는 바둑판 모양의 격자 구조 체계를 무엇이라 하는가?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans29" value="1"> 뼈대</label></li>
+                <li><label><input type="radio" name="ans29" value="2"> 그리드(Grid)</label></li>
+                <li><label><input type="radio" name="ans29" value="3"> 블록</label></li>
+                <li><label><input type="radio" name="ans29" value="4"> 여백</label></li>
+            </ul>
+            <div class="correct-ans" id="c29">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q30">
+            <div class="q-title">30. 인쇄 공정에서 인쇄판을 찍기 전, 최종 인쇄 결과를 미리 확인해 보는 공정은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans30" value="1"> 제본</label></li>
+                <li><label><input type="radio" name="ans30" value="2"> 정판</label></li>
+                <li><label><input type="radio" name="ans30" value="3"> 교정(Proofing)</label></li>
+                <li><label><input type="radio" name="ans30" value="4"> 조판</label></li>
+            </ul>
+            <div class="correct-ans" id="c30">정답: 3번</div>
+        </div>
+
+        <div class="question-card" id="q31">
+            <div class="q-title">31. 다음 중 종이의 앞뒷면 구별 없이 고른 품질을 얻기 위해 초지기에서 거치는 공정은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans31" value="1"> 사이징</label></li>
+                <li><label><input type="radio" name="ans31" value="2"> 캘린더링</label></li>
+                <li><label><input type="radio" name="ans31" value="3"> 고해</label></li>
+                <li><label><input type="radio" name="ans31" value="4"> 증해</label></li>
+            </ul>
+            <div class="correct-ans" id="c31">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q32">
+            <div class="q-title">32. 웹에서 투명 배경을 지원하면서도 손실이 없는 압축을 지원하는 트루컬러 지원 포맷은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans32" value="1"> BMP</label></li>
+                <li><label><input type="radio" name="ans32" value="2"> JPEG</label></li>
+                <li><label><input type="radio" name="ans32" value="3"> PNG</label></li>
+                <li><label><input type="radio" name="ans32" value="4"> GIF</label></li>
+            </ul>
+            <div class="correct-ans" id="c32">정답: 3번</div>
+        </div>
+
+        <div class="question-card" id="q33">
+            <div class="q-title">33. 종이의 연물 단위 중 1연(Ream)에 해당하는 전지의 장수는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans33" value="1"> 100장</label></li>
+                <li><label><input type="radio" name="ans33" value="2"> 500장</label></li>
+                <li><label><input type="radio" name="ans33" value="3"> 1000장</label></li>
+                <li><label><input type="radio" name="ans33" value="4"> 1200장</label></li>
+            </ul>
+            <div class="correct-ans" id="c33">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q34">
+            <div class="q-title">34. 다음 중 전자출판 기기에서 문자 정보를 화면이나 출력물로 나타내기 위한 서체 정보 형태가 아닌 것은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans34" value="1"> 비트맵 폰트</label></li>
+                <li><label><input type="radio" name="ans34" value="2"> 아웃라인 폰트</label></li>
+                <li><label><input type="radio" name="ans34" value="3"> 오픈타입 폰트(OTF)</label></li>
+                <li><label><input type="radio" name="ans34" value="4"> 아날로그 폰트</label></li>
+            </ul>
+            <div class="correct-ans" id="c34">정답: 4번</div>
+        </div>
+
+        <div class="question-card" id="q35">
+            <div class="q-title">35. 인쇄물 디자인 시 실제 재단선보다 바깥쪽으로 약 3mm 정도 여유를 두어 배경을 늘려 그리는 영역은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans35" value="1"> 도련(Bleed)</label></li>
+                <li><label><input type="radio" name="ans35" value="2"> 그리드</label></li>
+                <li><label><input type="radio" name="ans35" value="3"> 판면</label></li>
+                <li><label><input type="radio" name="ans35" value="4"> 슬러그</label></li>
+            </ul>
+            <div class="correct-ans" id="c35">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q36">
+            <div class="q-title">36. 영문 타이포그래피에서 소문자 x의 높이를 기준으로 정하는 서체의 기준 높이는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans36" value="1"> 어센더(Ascender)</label></li>
+                <li><label><input type="radio" name="ans36" value="2"> 디센더(Descender)</label></li>
+                <li><label><input type="radio" name="ans36" value="3"> 엑스 하이트(x-height)</label></li>
+                <li><label><input type="radio" name="ans36" value="4"> 베이스라인</label></li>
+            </ul>
+            <div class="correct-ans" id="c36">정답: 3번</div>
+        </div>
+
+        <div class="question-card" id="q37">
+            <div class="q-title">37. 다음 중 '출판물의 원고 작성-편집-조판-제판'에 이르는 전 과정을 컴퓨터 시스템 하나로 통합 처리하는 방식을 뜻하는 용어는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans37" value="1"> DTP</label></li>
+                <li><label><input type="radio" name="ans37" value="2"> CTS</label></li>
+                <li><label><input type="radio" name="ans37" value="3"> OLE</label></li>
+                <li><label><input type="radio" name="ans37" value="4"> GUI</label></li>
+            </ul>
+            <div class="correct-ans" id="c37">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q38">
+            <div class="q-title">38. 먼셀 색체계에서 5R 4/14 로 표기할 때, 숫자 '4'가 나타내는 의미는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans38" value="1"> 색상</label></li>
+                <li><label><input type="radio" name="ans38" value="2"> 명도</label></li>
+                <li><label><input type="radio" name="ans38" value="3"> 채도</label></li>
+                <li><label><input type="radio" name="ans38" value="4"> 투명도</label></li>
+            </ul>
+            <div class="correct-ans" id="c38">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q39">
+            <div class="q-title">39. 다음 중 인쇄물 서체 설계에서 글자 획 끝에 돌출된 작은 획(돌기)이 있는 서체 군을 무엇이라 하는가?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans39" value="1"> 산세리프(Sans-serif)</label></li>
+                <li><label><input type="radio" name="ans39" value="2"> 세리프(Serif)</label></li>
+                <li><label><input type="radio" name="ans39" value="3"> 스크립트</label></li>
+                <li><label><input type="radio" name="ans39" value="4"> 고딕</label></li>
+            </ul>
+            <div class="correct-ans" id="c39">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q40">
+            <div class="q-title">40. 다음 중 디바이스마다 다른 색상 영역을 일관되게 보정 및 관리해 주는 시스템의 약어는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans40" value="1"> CMS</label></li>
+                <li><label><input type="radio" name="ans40" value="2"> PMS</label></li>
+                <li><label><input type="radio" name="ans40" value="3"> DTP</label></li>
+                <li><label><input type="radio" name="ans40" value="4"> RIP</label></li>
+            </ul>
+            <div class="correct-ans" id="c40">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q41">
+            <div class="q-title">41. 다음 중 컴퓨터 그래픽 이미지 파일 형식 중 고해상도 인쇄용으로 주로 쓰이며 손실/무손실 압축을 모두 지원하는 태그 기반 포맷은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans41" value="1"> TIFF</label></li>
+                <li><label><input type="radio" name="ans41" value="2"> GIF</label></li>
+                <li><label><input type="radio" name="ans41" value="3"> BMP</label></li>
+                <li><label><input type="radio" name="ans41" value="4"> PNG</label></li>
+            </ul>
+            <div class="correct-ans" id="c41">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q42">
+            <div class="q-title">42. 양장 제본 시 책의 내지 첫 장과 표지 안쪽 면을 단단하게 고정하기 위해 붙이는 종이는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans42" value="1"> 면지</label></li>
+                <li><label><input type="radio" name="ans42" value="2"> 표지</label></li>
+                <li><label><input type="radio" name="ans42" value="3"> 간지</label></li>
+                <li><label><input type="radio" name="ans42" value="4"> 속표지</label></li>
+            </ul>
+            <div class="correct-ans" id="c42">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q43">
+            <div class="q-title">43. 다음 중 인쇄용 지면 레이아웃 서체 크기 단위로, 1포인트(pt)의 실제 대략적인 크기는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans43" value="1"> 약 1/72 인치</label></li>
+                <li><label><input type="radio" name="ans43" value="2"> 약 1/12 인치</label></li>
+                <li><label><input type="radio" name="ans43" value="3"> 약 1mm</label></li>
+                <li><label><input type="radio" name="ans43" value="4"> 약 0.1mm</label></li>
+            </ul>
+            <div class="correct-ans" id="c43">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q44">
+            <div class="q-title">44. 화면 출력 속도를 높이기 위해 글자 획 정보 대신 사각형 블록 등으로 대체해 보여주는 편집 뷰 옵션은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans44" value="1"> 그리스 아웃(Greeking)</label></li>
+                <li><label><input type="radio" name="ans44" value="2"> 에일리어싱</label></li>
+                <li><label><input type="radio" name="ans44" value="3"> 래스터화</label></li>
+                <li><label><input type="radio" name="ans44" value="4"> 커닝</label></li>
+            </ul>
+            <div class="correct-ans" id="c44">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q45">
+            <div class="q-title">45. 디자인의 형태 구성 요소 중 위치만을 가지고 크기나 두께가 없는 추상적인 요소는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans45" value="1"> 점</label></li>
+                <li><label><input type="radio" name="ans45" value="2"> 선</label></li>
+                <li><label><input type="radio" name="ans45" value="3"> 면</label></li>
+                <li><label><input type="radio" name="ans45" value="4"> 입체</label></li>
+            </ul>
+            <div class="correct-ans" id="c45">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q46">
+            <div class="q-title">46. 다음 중 포스트스크립트나 벡터 그래픽 정보를 인쇄 장치가 이해할 수 있는 비트맵(망점)으로 변환해 주는 장치는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans46" value="1"> RIP</label></li>
+                <li><label><input type="radio" name="ans46" value="2"> CMS</label></li>
+                <li><label><input type="radio" name="ans46" value="3"> CPU</label></li>
+                <li><label><input type="radio" name="ans46" value="4"> GPU</label></li>
+            </ul>
+            <div class="correct-ans" id="c46">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q47">
+            <div class="q-title">47. 다음 중 단행본 출판물의 본문 시작 전, 책 제목만을 간단히 표기하는 약식 표지 페이지를 뜻하는 용어는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans47" value="1"> 속표지(Half Title)</label></li>
+                <li><label><input type="radio" name="ans47" value="2"> 판권장</label></li>
+                <li><label><input type="radio" name="ans47" value="3"> 서문</label></li>
+                <li><label><input type="radio" name="ans47" value="4"> 목차</label></li>
+            </ul>
+            <div class="correct-ans" id="c47">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q48">
+            <div class="q-title">48. 컬러 인쇄에서 색상이 서로 겹쳐서 어긋나는 현상을 방지하기 위해, 인접한 색상 경계를 미세하게 겹치도록 처리하는 인쇄 기법은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans48" value="1"> 트래핑(Trapping)</label></li>
+                <li><label><input type="radio" name="ans48" value="2"> 오버프린트</label></li>
+                <li><label><input type="radio" name="ans48" value="3"> 모아레 방지</label></li>
+                <li><label><input type="radio" name="ans48" value="4"> 모핑</label></li>
+            </ul>
+            <div class="correct-ans" id="c48">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q49">
+            <div class="q-title">49. 다음 중 연속 간행물(잡지, 저널 등)에 부여하는 국제 표준 식별 번호의 약어는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans49" value="1"> ISBN</label></li>
+                <li><label><input type="radio" name="ans49" value="2"> ISSN</label></li>
+                <li><label><input type="radio" name="ans49" value="3"> CIP</label></li>
+                <li><label><input type="radio" name="ans49" value="4"> DDC</label></li>
+            </ul>
+            <div class="correct-ans" id="c49">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q50">
+            <div class="q-title">50. 다음 중 인쇄 스크린 선수(LPI)가 높을수록 나타나는 현상으로 옳은 것은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans50" value="1"> 망점이 커지고 인쇄 화질이 거칠어진다.</label></li>
+                <li><label><input type="radio" name="ans50" value="2"> 망점이 미세해지고 인쇄 화질이 정밀해진다.</label></li>
+                <li><label><input type="radio" name="ans50" value="3"> 인쇄 잉크 사용량이 무조건 줄어든다.</label></li>
+                <li><label><input type="radio" name="ans50" value="4"> 거친 신문지에만 인쇄가 가능해진다.</label></li>
+            </ul>
+            <div class="correct-ans" id="c50">정답: 2번</div>
+        </div>
+
+        <div class="question-card" id="q51">
+            <div class="q-title">51. 포토샵 등에서 이미지의 외곽 테두리를 부드럽게 깎아내거나 안개처럼 흐릿하게 만드는 투명도 경계 제어 옵션은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans51" value="1"> 페더(Feather)</label></li>
+                <li><label><input type="radio" name="ans51" value="2"> 안티에일리어싱</label></li>
+                <li><label><input type="radio" name="ans51" value="3"> 디더링</label></li>
+                <li><label><input type="radio" name="ans51" value="4"> 블러</label></li>
+            </ul>
+            <div class="correct-ans" id="c51">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q52">
+            <div class="q-title">52. 다음 중 문장 끝부분에 걸친 단어가 잘릴 때 하이픈(-)을 넣어 자연스럽게 단어를 연결해 주는 자동 맞춤 기능은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans52" value="1"> 하이프네이션(Hyphenation)</label></li>
+                <li><label><input type="radio" name="ans52" value="2"> 저스티피케이션</label></li>
+                <li><label><input type="radio" name="ans52" value="3"> 얼라인먼트</label></li>
+                <li><label><input type="radio" name="ans52" value="4"> 커닝</label></li>
+            </ul>
+            <div class="correct-ans" id="c52">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q53">
+            <div class="q-title">53. 다음 중 인쇄상 오목판(Intaglio) 방식에 속하는 대표적인 인쇄 기법은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans53" value="1"> 그라비어 인쇄</label></li>
+                <li><label><input type="radio" name="ans53" value="2"> 플렉소 인쇄</label></li>
+                <li><label><input type="radio" name="ans53" value="3"> 마스터 인쇄</label></li>
+                <li><label><input type="radio" name="ans53" value="4"> 활판 인쇄</label></li>
+            </ul>
+            <div class="correct-ans" id="c53">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q54">
+            <div class="q-title">54. 출판기획의 단계 중 가장 먼저 선행되어야 하는 과정은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans54" value="1"> 기본 아이디어 구상 및 시장 조사</label></li>
+                <li><label><input type="radio" name="ans54" value="2"> 제작 단가 및 예산 편성</label></li>
+                <li><label><input type="radio" name="ans54" value="3"> 편집 디자인 스타일 지정</label></li>
+                <li><label><input type="radio" name="ans54" value="4"> 유통 채널 계약 수립</label></li>
+            </ul>
+            <div class="correct-ans" id="c54">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q55">
+            <div class="q-title">55. 두 가지 이상의 색을 번갈아 배치하거나 배치 구조에 따라 마치 움직이는 듯한 시각적 착각을 일으키는 근대 예술 사조는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans55" value="1"> 옵아트(Op Art)</label></li>
+                <li><label><input type="radio" name="ans55" value="2"> 팝아트(Pop Art)</label></li>
+                <li><label><input type="radio" name="ans55" value="3"> 아르누보</label></li>
+                <li><label><input type="radio" name="ans55" value="4"> 바우하우스</label></li>
+            </ul>
+            <div class="correct-ans" id="c55">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q56">
+            <div class="q-title">56. 다음 중 인쇄물 한 페이지 내에서 단락의 첫 글자를 매우 크게 키워 장식하는 타이포그래피 기법은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans56" value="1"> 드롭 캡(Drop Caps)</label></li>
+                <li><label><input type="radio" name="ans56" value="2"> 소문자 정렬</label></li>
+                <li><label><input type="radio" name="ans56" value="3"> 첨자 변환</label></li>
+                <li><label><input type="radio" name="ans56" value="4"> 아웃라인화</label></li>
+            </ul>
+            <div class="correct-ans" id="c56">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q57">
+            <div class="q-title">57. 다음 중 인쇄기의 잉크 롤러 배열 문제 등으로 인해 인쇄물에 원치 않는 불규칙한 가로줄이나 얼룩이 생기는 현상은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans57" value="1"> 고스팅 현상(Ghosting)</label></li>
+                <li><label><input type="radio" name="ans57" value="2"> 뒷묻음 현상</label></li>
+                <li><label><input type="radio" name="ans57" value="3"> 모아레 현상</label></li>
+                <li><label><input type="radio" name="ans57" value="4"> 핀 어긋남</label></li>
+            </ul>
+            <div class="correct-ans" id="c57">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q58">
+            <div class="q-title">58. 다음 중 서체의 스타일 속성에 속하지 않는 것은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans58" value="1"> Regular</label></li>
+                <li><label><input type="radio" name="ans58" value="2"> Italic</label></li>
+                <li><label><input type="radio" name="ans58" value="3"> Bold</label></li>
+                <li><label><input type="radio" name="ans58" value="4"> Vector</label></li>
+            </ul>
+            <div class="correct-ans" id="c58">정답: 4번</div>
+        </div>
+
+        <div class="question-card" id="q59">
+            <div class="q-title">59. 전자출판에서 콘텐츠 불법 복제와 유출을 막고 저작권을 보호하기 위해 적용하는 기술적 보호 조치 시스템의 약어는?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans59" value="1"> DRM</label></li>
+                <li><label><input type="radio" name="ans59" value="2"> CMS</label></li>
+                <li><label><input type="radio" name="ans59" value="3"> DTP</label></li>
+                <li><label><input type="radio" name="ans59" value="4"> FTP</label></li>
+            </ul>
+            <div class="correct-ans" id="c59">정답: 1번</div>
+        </div>
+
+        <div class="question-card" id="q60">
+            <div class="q-title">60. 다음 중 인쇄 품질을 결정하는 '해상도와 스크린 선수(LPI)'의 이상적인 관계식으로 가장 적절한 것은?</div>
+            <ul class="options">
+                <li><label><input type="radio" name="ans60" value="1"> 인쇄 해상도(DPI) = 스크린 선수(LPI)의 약 1.5 ~ 2배</label></li>
+                <li><label><input type="radio" name="ans60" value="2"> 인쇄 해상도(DPI) = 스크린 선수(LPI)의 약 10배</label></li>
+                <li><label><input type="radio" name="ans60" value="3"> 인쇄 해상도(DPI)와 스크린 선수(LPI)는 완벽히 같아야 함</label></li>
+                <li><label><input type="radio" name="ans60" value="4"> 해상도가 높으면 스크린 선수는 낮아야 함</label></li>
+            </ul>
+            <div class="correct-ans" id="c60">정답: 1번</div>
+        </div>
+
+        <div class="btn-container">
+            <button type="button" id="submitBtn" onclick="checkAnswers(false)">제출 및 채점하기</button>
+        </div>
+    </form>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    const targetAnswers = [
+        2,4,2,2,3,2,3,1,3,2,
+        4,3,1,3,2,2,4,1,2,2,
+        1,1,2,2,4,2,2,2,2,3,
+        2,3,2,4,1,3,1,2,2,1,
+        1,1,1,1,1,1,1,1,2,2,
+        1,1,1,1,1,1,1,4,1,1
+    ];
+
+    let timeLeft = 3600; // 60분 = 3600초
+    let timerInterval = null;
+    let isFinished = false;
+
+    // 페이지 로드 시 타이머 시작
+    window.onload = function() {
+        startTimer();
+    };
+
+    function startTimer() {
+        timerInterval = setInterval(function() {
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('timeDisplay').innerText = "시간 종료";
+                if (!isFinished) {
+                    alert("제한 시간이 초과되었습니다! 시험이 자동 제출됩니다.");
+                    checkAnswers(true); // 시간 초과 자동 제출
+                }
+            } else {
+                timeLeft--;
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                
+                // 두 자리 수 포맷팅
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                
+                document.getElementById('timeDisplay').innerText = minutes + ":" + seconds;
+                
+                // 시간 임박 경고 조절 (5분 미만일 때 빨갛게 깜빡임 효과 등 추가 가능)
+                if (timeLeft < 300) {
+                    document.getElementById('timeDisplay').style.color = '#ff4d4d';
+                }
+            }
+        }, 1000);
+    }
+
+    function checkAnswers(isTimeOut) {
+        if (isFinished) return; // 이미 제출했다면 중복 실행 방지
+        isFinished = true;
+        
+        clearInterval(timerInterval); // 타이머 멈춤
+        document.getElementById('submitBtn').disabled = true; // 버튼 비활성화
+
+        let score = 0;
+        let correctCount = 0;
+        const totalQuestions = 60;
+
+        for (let i = 1; i <= totalQuestions; i++) {
+            const rdos = document.getElementsByName('ans' + i);
+            let selectedValue = null;
+            
+            for (let j = 0; j < rdos.length; j++) {
+                if (rdos[j].checked) {
+                    selectedValue = parseInt(rdos[j].value);
+                    break;
+                }
+            }
+
+            const qCard = document.getElementById('q' + i);
+            const ansDiv = document.getElementById('c' + i);
+            
+            if (ansDiv) ansDiv.style.display = 'block';
+
+            if (selectedValue === targetAnswers[i - 1]) {
+                correctCount++;
+                if (qCard) {
+                    qCard.classList.remove('wrong-card');
+                    qCard.classList.add('correct-card');
+                }
+            } else {
+                if (qCard) {
+                    qCard.classList.remove('correct-card');
+                    qCard.classList.add('wrong-card');
+                }
+            }
+        }
+
+        score = Math.round((correctCount / totalQuestions) * 100);
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+        
+        let prefixText = isTimeOut ? "⏰ [시간 초과 제출] " : "📝 [정상 제출] ";
+        
+        if (score >= 60) {
+            resultDiv.style.backgroundColor = '#e2f6ea';
+            resultDiv.style.color = '#27ae60';
+            resultDiv.innerHTML = `🎉 ${prefixText} 합격입니다! <br> 맞은 개수: ${correctCount} / ${totalQuestions} 문항 (점수: ${score}점)`;
+        } else {
+            resultDiv.style.backgroundColor = '#fde8e8';
+            resultDiv.style.color = '#c0392b';
+            resultDiv.innerHTML = `😭 ${prefixText} 불합격입니다. 조금 더 분발하세요! <br> 맞은 개수: ${correctCount} / ${totalQuestions} 문항 (점수: ${score}점)`;
+        }
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
